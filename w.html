@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirigiendo a WhatsApp...</title>
+    <style>
+        body {
+            background-color: #0b0e14;
+            color: #ffffff;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(37, 211, 102, 0.1);
+            border-left-color: #25D366;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        p {
+            font-size: 16px;
+            color: #a0aec0;
+            letter-spacing: 0.5px;
+        }
+    </style>
+    <script>
+        fetch('https://zeus-i-entretenimiento-default-rtdb.firebaseio.com/whatsapp.json')
+            .then(res => res.json())
+            .then(numero => {
+                if(numero) {
+                    window.location.href = `https://wa.me/${numero}`;
+                } else {
+                    document.getElementById('text').innerText = 'Error al obtener contacto.';
+                }
+            })
+            .catch(() => {
+                document.getElementById('text').innerText = 'Error de conexión.';
+            });
+    </script>
+</head>
+<body>
+    <div class="spinner"></div>
+    <p id="text">Conectando con un asesor en WhatsApp...</p>
+</body>
+</html>
