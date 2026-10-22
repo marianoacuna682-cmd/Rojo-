@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control | WhatsApp</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #080a0f; color: #ffffff; font-family: 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .card { background: #121620; border: 1px solid #1e2638; border-radius: 16px; padding: 30px 24px; width: 100%; max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); text-align: center; }
+        .icon { font-size: 40px; margin-bottom: 10px; }
+        h2 { font-size: 20px; font-weight: 700; color: #ffffff; margin-bottom: 6px; text-transform: uppercase; }
+        p.subtitle { font-size: 13px; color: #718096; margin-bottom: 25px; }
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; font-size: 12px; font-weight: 600; color: #a0aec0; margin-bottom: 8px; text-transform: uppercase; }
+        input { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid #2d3748; background: #1a202c; color: #ffffff; font-size: 16px; outline: none; }
+        input:focus { border-color: #25D366; box-shadow: 0 0 8px rgba(37,211,102,0.3); }
+        button { width: 100%; padding: 15px; background: linear-gradient(135deg, #25D366 0%, #1ebd56 100%); border: none; color: #ffffff; font-weight: 700; font-size: 15px; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
+        .status-msg { margin-top: 15px; font-size: 13px; font-weight: 600; min-height: 18px; }
+        .status-success { color: #25D366; }
+        .status-error { color: #e53e3e; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">📲</div>
+        <h2>CAMBIAR NÚMERO</h2>
+        <p class="subtitle">Actualización en tiempo real</p>
+        <div class="form-group">
+            <label for="num">Número con código de país:</label>
+            <input type="text" id="num" placeholder="Ej: 5493534412972" autocomplete="off">
+        </div>
+        <button onclick="guardar()">Guardar cambios</button>
+        <div id="msg" class="status-msg"></div>
+    </div>
+    <script>
+        const DB_URL = 'https://zeus-i-entretenimiento-default-rtdb.firebaseio.com/whatsapp.json';
+        fetch(DB_URL).then(res => res.json()).then(data => { if(data) document.getElementById('num').value = data; });
+        function guardar() {
+            const numero = document.getElementById('num').value.trim();
+            const msg = document.getElementById('msg');
+            msg.className = 'status-msg'; msg.innerText = '';
+            if(!numero) { msg.className = 'status-msg status-error'; msg.innerText = 'Ingresa un número válido'; return; }
+            fetch(DB_URL, { method: 'PUT', body: JSON.stringify(numero) })
+            .then(res => {
+                if(res.ok) { msg.className = 'status-msg status-success'; msg.innerText = '¡Número actualizado correctamente!'; }
+                else { msg.className = 'status-msg status-error'; msg.innerText = 'Error al guardar.'; }
+            })
+            .catch(() => { msg.className = 'status-msg status-error'; msg.innerText = 'Error de conexión.'; });
+        }
+    </script>
+</body>
+</html>
